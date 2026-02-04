@@ -185,6 +185,42 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "InternalBudgetTracker.Controllers.ReportController",
+    "Method": "BudgetReport",
+    "RelativePath": "api/report/budget",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InternalBudgetTracker.Controllers.ReportController",
+    "Method": "DepartmentReport",
+    "RelativePath": "api/report/department",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "departmentId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InternalBudgetTracker.Controllers.ReportController",
+    "Method": "SummaryReport",
+    "RelativePath": "api/report/summary",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "InternalBudgetTracker.Controllers.UsersController",
     "Method": "Login",
     "RelativePath": "api/users/login",

@@ -23,7 +23,6 @@ namespace InternalBudgetTracker.Services
              var roleClaim = user.FindFirst(ClaimTypes.Role);
             var emailClaim = user.FindFirst(ClaimTypes.Email);
            
-
             if ( userIdClaim==null ||roleClaim == null)
                 throw new Exception("Invalid token");
 
@@ -140,11 +139,11 @@ namespace InternalBudgetTracker.Services
             if (budget == null)
                 throw new Exception("Invalid budget id");
 
-            // 3️⃣ Check: same user ne create kiya?
+            // 3️Check: same user ne create kiya?
             if (budget.CreatedByUserId != userId)
                 throw new Exception("You did not create this budget");
 
-            // 4️⃣ Soft delete
+            // 4️ Soft delete
             budget.Status = BudgetStatus.Closed;
             budget.EndDate = DateTime.UtcNow;
 

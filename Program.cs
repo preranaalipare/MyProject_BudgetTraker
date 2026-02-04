@@ -77,6 +77,7 @@ builder.Services.AddScoped<HelperService>();
 builder.Services.AddScoped<BudgetService>();
 builder.Services.AddScoped<ExpenseService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ReportService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

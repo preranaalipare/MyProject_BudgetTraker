@@ -25,11 +25,9 @@ namespace InternalBudgetTracker.Models
         // Budget is created by a USER (Manager check controller/JWT me hoga)
         public int CreatedByUserId { get; set; }
         public User CreatedByUser { get; set; }
-
         public int DepartmentId { get;set; }
-       public Department Department { get; set; }
+        public Department Department { get; set; }
         // One Budget → Many Expenses
-
         public ICollection<Expense> Expenses { get; set; }
     }
 }

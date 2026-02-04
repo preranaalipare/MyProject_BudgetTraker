@@ -14,9 +14,11 @@ namespace InternalBudgetTracker.Data
         public DbSet<Budget> Budgets { get; set; }
         public DbSet<ExpenseApproval> ExpenseApprovals { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             foreach (var foreignKey in modelBuilder.Model
                 .GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys()))

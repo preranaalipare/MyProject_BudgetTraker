@@ -18,9 +18,8 @@ public class UserService
         _helperService = helperService;
     }
 
-    // ===============================
+    
     // EMPLOYEE REGISTRATION
-    // ===============================
     public string RegisterEmployee(UserRegisterDTO dto)
     {
         if (_context.Users.Any(u => u.Email == dto.Email))
@@ -51,9 +50,9 @@ public class UserService
         return "A verification email is sent to your address";
     }
 
-    // ===============================
+    
     // MANAGER REGISTRATION
-    // ===============================
+
     public string RegisterManager(UserRegisterDTO dto)
     {
         if (_context.Users.Any(u => u.Email == dto.Email))
@@ -84,9 +83,9 @@ public class UserService
         return "A verification email is sent to your address";
     }
 
-    // ===============================
+    
     // VERIFY USER (EMAIL)
-    // ===============================
+ 
     public string VerifyUser(string token)
     {
         dynamic result = _helperService.CheckValidToken(token);
@@ -108,9 +107,9 @@ public class UserService
         return "Successfully verified";
     }
 
-    // ===============================
+   
     // LOGIN USER
-    // ===============================
+    
     public Dictionary<string, string> Login(UserLoginDTO dto)
     {
         string hashPassword =
