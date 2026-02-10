@@ -14,7 +14,8 @@ namespace InternalBudgetTracker.Data
         public DbSet<Budget> Budgets { get; set; }
         public DbSet<ExpenseApproval> ExpenseApprovals { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-        
+         public DbSet<AuditLog> AuditLogs { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +26,11 @@ namespace InternalBudgetTracker.Data
             {
                 foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
             }
+
+            
+            
+
+            base.OnModelCreating(modelBuilder);
         }
 
 

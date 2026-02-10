@@ -95,7 +95,8 @@ public string GenerateToken(int userId,string email, string role)
                     data = new
                     {
                         email = principal.FindFirst(ClaimTypes.Email)?.Value,
-                        role = principal.FindFirst(ClaimTypes.Role)?.Value
+                        role = principal.FindFirst(ClaimTypes.Role)?.Value,
+                        userId=principal.FindFirst(ClaimTypes.NameIdentifier)?.Value
                     }
                 };
             }

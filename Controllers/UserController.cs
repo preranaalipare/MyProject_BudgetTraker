@@ -10,7 +10,7 @@ namespace InternalBudgetTracker.Controllers
     
 
     [ApiController]
-    [Route("api/users")]
+    [Route("users")]
     public class UsersController : ControllerBase
     {
         private readonly UserService _userService;

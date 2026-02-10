@@ -364,7 +364,7 @@
         }
       }
     },
-    "/api/users/register-employee": {
+    "/users/register-employee": {
       "post": {
         "tags": [
           "Users"
@@ -395,7 +395,7 @@
         }
       }
     },
-    "/api/users/register-manager": {
+    "/users/register-manager": {
       "post": {
         "tags": [
           "Users"
@@ -426,7 +426,7 @@
         }
       }
     },
-    "/api/users/verify": {
+    "/users/verify": {
       "get": {
         "tags": [
           "Users"
@@ -447,7 +447,7 @@
         }
       }
     },
-    "/api/users/login": {
+    "/users/login": {
       "post": {
         "tags": [
           "Users"

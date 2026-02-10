@@ -223,7 +223,7 @@
   {
     "ContainingType": "InternalBudgetTracker.Controllers.UsersController",
     "Method": "Login",
-    "RelativePath": "api/users/login",
+    "RelativePath": "users/login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -239,7 +239,7 @@
   {
     "ContainingType": "InternalBudgetTracker.Controllers.UsersController",
     "Method": "RegisterEmployee",
-    "RelativePath": "api/users/register-employee",
+    "RelativePath": "users/register-employee",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -255,7 +255,7 @@
   {
     "ContainingType": "InternalBudgetTracker.Controllers.UsersController",
     "Method": "RegisterManager",
-    "RelativePath": "api/users/register-manager",
+    "RelativePath": "users/register-manager",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -271,7 +271,7 @@
   {
     "ContainingType": "InternalBudgetTracker.Controllers.UsersController",
     "Method": "Verify",
-    "RelativePath": "api/users/verify",
+    "RelativePath": "users/verify",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

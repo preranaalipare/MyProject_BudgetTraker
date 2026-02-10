@@ -2,6 +2,7 @@
 using InternalBudgetTracker.DTOs;
 using InternalBudgetTracker.Enum;
 using InternalBudgetTracker.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -32,40 +33,59 @@ namespace InternalBudgetTracker.Services
 
             var employeeId = int.Parse(userIdClaim.Value);
 
-            // 3️⃣ Expense create
-            var expense = new Expense
-            {
-                Description = dto.Description,
-                Amount = dto.Amount,
-                BudgetId = dto.BudgetId,
-                EmployeeId = employeeId,   //  SAME as budget logic
-                Status = ExpenseStatus.Pending,
-                SubmittedDate = DateTime.UtcNow
-            };
+            //// 3️⃣ Expense create
+            // var expense = new Expense
+            // {
+            //     Description = dto.Description,
+            //     Amount = dto.Amount,
+            //     BudgetId = dto.BudgetId,
+            //     EmployeeId = employeeId,   //  SAME as budget logic
+            //     Status = ExpenseStatus.Pending,
+            //     SubmittedDate = DateTime.UtcNow
+            // };
 
-            _context.Expenses.Add(expense);
-            _context.SaveChanges();
+            // _context.Expenses.Add(expense);
+            // _context.SaveChanges();
+
+            var expense= _context.Database.ExecuteSqlRaw(
+     "EXEC dbo.sp_Expense " +
+     "@Action, @Description, @Amount, @BudgetId, @EmployeeId, @ManagerId, @StartDate, @EndDate",
+     new SqlParameter("@Action", "INSERT"),
+     new SqlParameter("@Description", (object)dto.Description ?? DBNull.Value),
+     new SqlParameter("@Amount", dto.Amount),
+     new SqlParameter("@BudgetId", dto.BudgetId),
+     new SqlParameter("@EmployeeId", employeeId),
+     new SqlParameter("@ManagerId", dto.ManagerId),
+     new SqlParameter("@StartDate", DBNull.Value),
+     new SqlParameter("@EndDate", DBNull.Value)
+     //new SqlParameter("@Status", DBNull.Value)
+     
+ );
 
             // 4️⃣ ExpenseApproval create
-            var approval = new ExpenseApproval
-            {
-                ExpenseId = expense.ExpenseId,
-                ManagerId = dto.ManagerId,
-                Status = ExpenseStatus.Pending,
-                StartDate = DateTime.UtcNow
-            };
 
-            _context.ExpenseApprovals.Add(approval);
-            _context.SaveChanges();
+            //var approval = new ExpenseApproval
+            //    {
+            //    //ExpenseId = expense.ExpenseId,
+            //           ExpenseId = expenseId,
+
+            //    ManagerId = dto.ManagerId,
+            //        Status = ExpenseStatus.Pending,
+            //        StartDate = DateTime.UtcNow
+            //    };
+
+            //    _context.ExpenseApprovals.Add(approval);
+            //    _context.SaveChanges();
 
             //Notification to manager when expense create
 
-         _notificationService.CreateNotification(
+            _notificationService.CreateNotification(
         dto.ManagerId,
         NotificationType.ExpensePending,
-        $"An expense request of ₹{expense.Amount} has been submitted and is awaiting your approval."
+        $"An expense request of ₹{dto.Amount} has been submitted and is awaiting your approval."
     );
 
+            
 
             return "Expense created successfully";
         }
@@ -103,49 +123,87 @@ namespace InternalBudgetTracker.Services
             //Console.WriteLine("user" + user);
 
 
-            var expense = _context.Expenses.FirstOrDefault(e =>
-                e.ExpenseId == expenseId &&
-                e.EmployeeId == userId &&
-                e.Status == ExpenseStatus.Pending &&
-                e.EndDate == null
+            //var expense = _context.Expenses.FirstOrDefault(e =>
+            //    e.ExpenseId == expenseId &&
+            //    e.EmployeeId == userId &&
+            //    e.Status == ExpenseStatus.Pending &&
+            //    e.EndDate == null
+            //);
+
+            //if (expense == null)
+            //    throw new Exception("Expense not editable");
+
+            //expense.Description = dto.Description ?? expense.Description;
+            //expense.Amount = dto.Amount ?? expense.Amount;
+            //expense.UpdatedDate = DateTime.UtcNow;
+
+            //_context.SaveChanges();
+            //return "Expense updated successfully";
+            try {
+                var rowsAffected = _context.Database.ExecuteSqlRaw(
+                "EXEC dbo.sp_UpdateExpense @ExpenseId, @EmployeeId, @Description, @Amount",
+                new SqlParameter("@ExpenseId", expenseId),
+                new SqlParameter("@EmployeeId", userId),
+                new SqlParameter("@Description", dto.Description ?? (object)DBNull.Value),
+                new SqlParameter("@Amount", dto.Amount)
             );
 
-            if (expense == null)
-                throw new Exception("Expense not editable");
+                // 3Check if update happened
+                if (rowsAffected == 0)
+                    throw new Exception("Expense not editable. It may be approved or not yours.");
+                return "Expense updated successfully";
 
-            expense.Description = dto.Description ?? expense.Description;
-            expense.Amount = dto.Amount ?? expense.Amount;
-            expense.UpdatedDate = DateTime.UtcNow;
-
-            _context.SaveChanges();
-            return "Expense updated successfully";
-        }
-        public string DeleteExpense(
-            int expenseId,
-            ClaimsPrincipal user)
+            
+            }
+              catch (Exception ex)
+              {
+                     throw new Exception(ex.Message);
+                 }
+     }
+        
+        public string DeleteExpense(int expenseId,ClaimsPrincipal user)
         {
-            int employeeId = int.Parse(
-                user.FindFirst(ClaimTypes.NameIdentifier)!.Value
-            );
+            try {
+                var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = int.Parse(userIdClaim.Value);
+                var expenseIdParam = new SqlParameter("@ExpenseId", expenseId);
+                var employeeIdParam = new SqlParameter("@EmployeeId", userId);
 
-            var expense = _context.Expenses.FirstOrDefault(e =>
-                e.ExpenseId == expenseId &&
-                e.EmployeeId == employeeId &&
-                e.Status == ExpenseStatus.Pending &&
-                e.EndDate == null
-            );
-
-            if (expense == null)
-                throw new Exception(
-                    "Expense not found OR not pending OR you are not the owner"
+                _context.Database.ExecuteSqlRaw(
+                    "EXEC sp_DeleteExpense @ExpenseId, @EmployeeId",
+                    expenseIdParam,
+                    employeeIdParam
                 );
 
-            // SOFT DELETE
-            expense.EndDate = DateTime.UtcNow;
-            expense.UpdatedDate = DateTime.UtcNow;
+                return "Expense deleted successfully";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;   // 👈 user ko exact error milega
+            }
+        
+ 
 
-            _context.SaveChanges();
-            return "Expense deleted successfully (soft delete)";
+            
+
+            //var expense = _context.Expenses.FirstOrDefault(e =>
+            //    e.ExpenseId == expenseId &&
+            //    e.EmployeeId == employeeId &&
+            //    e.Status == ExpenseStatus.Pending &&
+            //    e.EndDate == null
+            //);
+
+            //if (expense == null)
+            //    throw new Exception(
+            //        "Expense not found OR not pending OR you are not the owner"
+            //    );
+
+            //// SOFT DELETE
+            //expense.EndDate = DateTime.UtcNow;
+            //expense.UpdatedDate = DateTime.UtcNow;
+
+            //_context.SaveChanges();
+            
         }
 
         //Service for Expense approval or Reject

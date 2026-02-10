@@ -5,7 +5,7 @@ namespace InternalBudgetTracker.Controllers
 {
     [ApiController]
     [Route("api/report")]
-    //[Authorize(Roles = "Admin")]
+   
     public class ReportController : ControllerBase
     {
         private readonly ReportService _reportService;
@@ -15,15 +15,44 @@ namespace InternalBudgetTracker.Controllers
             _reportService = reportService;
         }
 
-        // Department wise report
+        // Department wise reports
+        //[HttpGet("department")]
+        //// [Authorize(Roles = "Admin")]
+        //public IActionResult DepartmentReport([FromQuery] int? departmentId)
+        //{
+        //    return Ok(_reportService.GetDepartmentReport(departmentId));
+        //}
+
         [HttpGet("department")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DepartmentReport([FromQuery] int? departmentId)
         {
-            return Ok(_reportService.GetDepartmentReport(departmentId));
+            try
+            {
+                var data = _reportService.GetDepartmentReport(departmentId);
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Department report fetched successfully",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Something went wrong",
+                    error = ex.Message
+                });
+            }
         }
 
         // All budgets report
         [HttpGet("budget")]
+        [Authorize(Roles = "Admin")]
+
         public IActionResult BudgetReport()
         {
             return Ok(_reportService.GetAllBudgetsReport());
@@ -31,6 +60,7 @@ namespace InternalBudgetTracker.Controllers
 
         // Overall summary report
         [HttpGet("summary")]
+        [Authorize(Roles = "Admin")]
         public IActionResult SummaryReport()
         {
             return Ok(_reportService.GetSummaryReport());

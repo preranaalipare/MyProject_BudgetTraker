@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using InternalBudgetTracker.Middleware;
 
 
 
@@ -54,6 +55,7 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes(builder.Configuration["Security:SecretKey"])
         )
     };
+ 
 });
 
 builder.Services.AddAuthorization();
@@ -92,6 +94,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+//Register Middleware
+app.UseMiddleware<AuditLoggingMiddleware>();
 
 app.MapControllers();
 

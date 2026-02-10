@@ -26,7 +26,8 @@ namespace InternalBudgetTracker.Services
                 mail.Body = message;
                 mail.IsBodyHtml = false;
 
-                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                //6050 port
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587 ))
                 {
                     smtp.Credentials = new NetworkCredential(
                         "kantsakshi03@gmail.com",
